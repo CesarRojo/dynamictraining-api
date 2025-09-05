@@ -1,0 +1,73 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "sqlserver"
+  url      = env("DATABASE_URL")
+}
+
+model Plant {
+  id          Int       @id @default(autoincrement())
+  name        String    @unique
+  code        String    @unique
+  status      Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relation to Section
+  sectionId   Int
+  section     Section   @relation(fields: [sectionId], references: [id])
+}
+
+model Section {
+  id          Int       @id @default(autoincrement())
+  name        String    @unique
+  status      Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // One Section has many Plants
+  plants      Plant[]
+
+  // One Section has many Data entries
+  data        Data[]
+}
+
+model Color {
+  id          Int       @id @default(autoincrement())
+  color       String    @unique
+  display     String
+  status      Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // One Color has many Data entries
+  data        Data[]
+}
+
+model Data {
+  id          Int       @id @default(autoincrement())
+  value       String    
+  status      Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relation to Color
+  colorId     Int
+  color       Color     @relation(fields: [colorId], references: [id])
+
+  // Relation to Section
+  sectionId   Int
+  section     Section   @relation(fields: [sectionId], references: [id])
+
+  // Ensure unique combination of sectionId and value
+  @@unique([sectionId, value])
+}
