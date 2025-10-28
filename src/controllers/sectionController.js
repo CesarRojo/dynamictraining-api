@@ -22,13 +22,26 @@ const getSectionById = async (req, res) => {
   }
 }
 
+const getSectionByPlant = async (req, res) => {
+  try {
+    const { plant } = req.query;
+    const section = await sectionServices.getSectionByPlant(plant);
+    if (!section) {
+      return res.status(404).json({ error: 'Section not found' });
+    }
+    res.status(200).json(section);
+  } catch (error) {
+    res.status(500).json({ error: 'Error fetching section by plant name' });
+  }
+}
+
 const createSection = async (req, res) => {
   try {
-    const { name } = req.body;
-    if (!name) {
-      return res.status(400).json({ error: 'Name is required' });
+    const { name, plantId } = req.body;
+    if (!name || !plantId) {
+      return res.status(400).json({ error: 'Name and plantId are required' });
     }
-    const newSection = await sectionServices.createSection({ name });
+    const newSection = await sectionServices.createSection({ name, plantId });
     res.status(201).json(newSection);
   } catch (error) {
     if (error.code === 'P2002') {
@@ -76,5 +89,6 @@ module.exports = {
   getSectionById,
   createSection,
   updateSection,
-  deleteSection
+  deleteSection,
+  getSectionByPlant,
 }

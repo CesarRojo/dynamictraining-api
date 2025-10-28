@@ -21,10 +21,9 @@ model Plant {
   status      Boolean   @default(true)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-
-  // Relation to Section
-  sectionId   Int
-  section     Section   @relation(fields: [sectionId], references: [id])
+  
+  // One Plant has many Sections
+  sections    Section[]
 }
 
 model Section {
@@ -34,11 +33,14 @@ model Section {
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
-  // One Section has many Plants
-  plants      Plant[]
+  // Foreign key a Plant
+  plantId     Int
+  plant       Plant     @relation(fields: [plantId], references: [id])
 
   // One Section has many Data entries
   data        Data[]
+  // One Section has many Gauge entries
+  gauges      Gauge[]
 }
 
 model Color {
@@ -70,4 +72,48 @@ model Data {
 
   // Ensure unique combination of sectionId and value
   @@unique([sectionId, value])
+  // Ensure unique combination of sectionId and colorId
+  @@unique([sectionId, colorId])
+}
+
+model User {
+  id          Int       @id @default(autoincrement())
+  email       String    @unique
+  password    String
+  plant       String
+  status      Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Insulator {
+  id          Int       @id @default(autoincrement())
+  name        String    @unique
+  status      Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // One Insulator has many Gauges
+  gauges      Gauge[]
+}
+
+model Gauge {
+  id              Int       @id @default(autoincrement())
+  gauge           String
+  rings           String
+  features        String
+  status          Boolean   @default(true)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  // Relation to Insulator
+  insulatorId     Int
+  insulator       Insulator @relation(fields: [insulatorId], references: [id])
+
+  // Relation to Section
+  sectionId       Int
+  section         Section   @relation(fields: [sectionId], references: [id])
+
+  // Unique combination constraint
+  @@unique([insulatorId, sectionId, gauge, rings, features])
 }

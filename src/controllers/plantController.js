@@ -23,19 +23,28 @@ const getPlantById = async (req, res) => {
   }
 }
 
+const getPlantByName = async (req, res) => {
+  try {
+    const { name } = req.query;
+    const plant = await plantServices.getPlantByName(name);
+    if (!plant) {
+      return res.status(404).json({ error: 'Plant not found' });
+    }
+    res.status(200).json(plant);
+  } catch (error) {
+    res.status(500).json({ error: 'Error fetching plant by name' });
+  }
+}
+
 const createPlant = async (req, res) => {
   try {
-    const { name, code, sectionId } = req.body;
+    const { name, code } = req.body;
 
-    if (!name || !code || !sectionId) {
-      return res.status(400).json({ error: 'Name, code and sectionId are required' });
+    if (!name || !code) {
+      return res.status(400).json({ error: 'Name and code are required' });
     }
 
-    // Check if section exists and is active
-    const section = await sectionServices.getSectionById(sectionId);
-    if (!section) return res.status(400).json({ error: 'Invalid sectionId' });
-
-    const newPlant = await plantServices.createPlant({ name, code, sectionId });
+    const newPlant = await plantServices.createPlant({ name, code });
     res.status(201).json(newPlant);
   } catch (error) {
     if (error.code === 'P2002') {
@@ -48,14 +57,14 @@ const createPlant = async (req, res) => {
 const updatePlant = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, code, sectionId, status } = req.body;
+    const { name, code, status } = req.body;
 
     const existingPlant = await plantServices.getPlantById(id);
     if (!existingPlant) {
       return res.status(404).json({ error: 'Plant not found' });
     }
 
-    const updatedPlant = await plantServices.updatePlant(id, { name, code, sectionId, status });
+    const updatedPlant = await plantServices.updatePlant(id, { name, code, status });
     res.status(200).json(updatedPlant);
   } catch (error) {
     res.status(500).json({ error: 'Error updating plant' });
@@ -84,4 +93,5 @@ module.exports = {
   createPlant,
   updatePlant,
   deletePlant,
+  getPlantByName,
 }

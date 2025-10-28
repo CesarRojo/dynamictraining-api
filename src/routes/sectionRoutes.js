@@ -4,6 +4,7 @@ const sectionController = require('../controllers/sectionController');
 const router = express.Router();
 
 router.get('/', sectionController.getAllSections);
+router.get('/plant', sectionController.getSectionByPlant);
 router.get('/:id', sectionController.getSectionById);
 router.post('/', sectionController.createSection);
 router.put('/:id', sectionController.updateSection);

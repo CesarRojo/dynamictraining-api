@@ -22,6 +22,19 @@ const getDataById = async (req, res) => {
   }
 }
 
+const getDataByPlant = async (req, res) => {
+  try {
+    const { plant } = req.query;
+    const data = await dataServices.getDataByPlant(plant);
+    if (!data || data.length === 0) {
+      return res.status(404).json({ error: 'Data not found' });
+    }
+    res.status(200).json(data);
+  } catch (error) {
+    res.status(500).json({ error: 'Error fetching data by plant' });
+  }
+}
+
 const createData = async (req, res) => {
   try {
     const { value, colorId, sectionId } = req.body;
@@ -79,4 +92,5 @@ module.exports = {
   createData,
   updateData,
   deleteData,
+  getDataByPlant,
 }

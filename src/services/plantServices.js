@@ -1,22 +1,23 @@
 const prisma = require('../prisma/prismaClient');
 
 const getAllPlants = async () => {
-  return await prisma.plant.findMany({
-    where: { status: true },
-    include: {
-      section: true, // Include related section info if needed
-    },
-  });
+  return await prisma.plant.findMany();
 }
 
 const getPlantById = async (id) => {
   return await prisma.plant.findFirst({
     where: {
       id: Number(id),
-      status: true,
     },
-    include: {
-      section: true,
+  });
+}
+
+const getPlantByName = async (name) => {
+  if(name === "Super") return await prisma.plant.findMany();
+
+  return await prisma.plant.findFirst({
+    where: {
+      name: name,
     },
   });
 }
@@ -46,4 +47,5 @@ module.exports = {
   createPlant,
   updatePlant,
   deletePlant,
+  getPlantByName,
 }

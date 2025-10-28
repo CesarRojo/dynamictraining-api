@@ -8,7 +8,18 @@ const getSectionById = async (id) => {
   return await prisma.section.findFirst({
     where: {
       id: Number(id),
-      status: true
+    }
+  });
+}
+
+const getSectionByPlant = async (plant) => {
+  if(plant === "Super") return await prisma.section.findMany();
+
+  return await prisma.section.findMany({
+    where: {
+      plant: {
+        name: plant
+      }
     }
   });
 }
@@ -39,5 +50,6 @@ module.exports = {
   getSectionById,
   createSection,
   updateSection,
-  deleteSection
+  deleteSection,
+  getSectionByPlant,
 }

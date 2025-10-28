@@ -8,7 +8,6 @@ const getColorById = async (id) => {
     return await prisma.color.findFirst({
         where: {
             id: Number(id),
-            status: true
         }
     });
 }
