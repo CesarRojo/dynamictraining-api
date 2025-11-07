@@ -41,6 +41,34 @@ model Section {
   data        Data[]
   // One Section has many Gauge entries
   gauges      Gauge[]
+
+  completions CompletedSection[]
+}
+
+model Player {
+  id          Int       @id @default(autoincrement())
+  clock       String
+  plant       String
+  game        String
+  
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  completedSections CompletedSection[]
+}
+
+model CompletedSection {
+  id          Int       @id @default(autoincrement())
+
+  // Relation to section
+  sectionId   Int
+  section     Section   @relation(fields: [sectionId], references: [id])
+
+  // Relation to Player
+  playerId    Int
+  player      Player    @relation(fields: [playerId], references: [id])
+
+  completedAt DateTime  @default(now())
 }
 
 model Color {

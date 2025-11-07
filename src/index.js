@@ -10,6 +10,7 @@ const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
 const insulatorRoutes = require('./routes/insulatorRoutes');
 const gaugeRoutes = require('./routes/gaugeRoutes');
+const playerRoutes = require('./routes/playerRoutes');
 const app = express();
 const PORT = process.env.PORT || 5024;
 
@@ -27,6 +28,7 @@ app.use('/auth', authRoutes);
 app.use('/users', userRoutes);
 app.use('/insulators', insulatorRoutes);
 app.use('/gauge', gaugeRoutes);
+app.use('/players', playerRoutes);
 
 // Database connection
 async function connectToDatabase() {
