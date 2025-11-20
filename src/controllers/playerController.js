@@ -19,6 +19,25 @@ const getPlayers = async (req, res) => {
   }
 };
 
+const getPlayersClasification = async (req, res) => {
+  try {
+    const { plant, game, clock, completedAt, page = 1, pageSize = 10 } = req.query;
+
+    const filters = { plant, game, clock, completedAt };
+
+    // Convert page and pageSize to numbers
+    const pageNum = parseInt(page, 10) || 1;
+    const pageSizeNum = parseInt(pageSize, 10) || 10;
+
+    const { players, totalCount } = await playerService.getPlayersClasification(filters, pageNum, pageSizeNum);
+
+    res.json({ players, totalCount, page: pageNum, pageSize: pageSizeNum });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error fetching players' });
+  }
+};
+
 const getPlayer = async (req, res) => {
   try {
     const id = Number(req.params.id);
@@ -60,4 +79,5 @@ module.exports = {
     getPlayers,
     getPlayer,
     createPlayer,
+    getPlayersClasification,
 };

@@ -55,6 +55,7 @@ model Player {
   updatedAt   DateTime  @updatedAt
 
   completedSections CompletedSection[]
+  attempts          Attempt[]
 }
 
 model CompletedSection {
@@ -66,9 +67,23 @@ model CompletedSection {
 
   // Relation to Player
   playerId    Int
-  player      Player    @relation(fields: [playerId], references: [id])
+  player      Player    @relation(fields: [playerId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  //Relation to attempt
+  attemptId   Int
+  attempt     Attempt   @relation(fields: [attemptId], references: [id])
 
   completedAt DateTime  @default(now())
+  correctCount String? 
+  timeTaken String?
+}
+
+model Attempt {
+  id          Int       @id @default(autoincrement())
+  playerId    Int
+  player      Player    @relation(fields: [playerId], references: [id])
+  
+  completedSections CompletedSection[]
 }
 
 model Color {
