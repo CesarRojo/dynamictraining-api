@@ -140,6 +140,42 @@ model Insulator {
   gauges      Gauge[]
 }
 
+model Response {
+  id        Int      @id @default(autoincrement())
+  url       String
+  ownerType String?   // Game type
+  response1 String?   // Optional response field 1
+  response2 String?   // Optional response field 2
+  createdAt DateTime @default(now())
+
+  gauges    Gauge[]
+
+  // Relación con GRP
+  grpId     Int?
+  grp       GRP?       @relation(fields: [grpId], references: [id])
+}
+
+model Game {
+  id             Int       @id @default(autoincrement())
+  name           String    @unique
+  type           String
+  time           String
+  correctAnswers String
+
+  // Relación con GRP
+  grpId          Int
+  grp            GRP       @relation(fields: [grpId], references: [id])
+}
+
+model GRP {
+  id        Int        @id @default(autoincrement())
+  name      String   
+
+  // Relaciones
+  games     Game[]
+  responses Response[]
+}
+
 model Gauge {
   id              Int       @id @default(autoincrement())
   gauge           String
@@ -149,14 +185,14 @@ model Gauge {
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
-  // Relation to Insulator
+  responseId      Int?
+  response        Response? @relation(fields: [responseId], references: [id])
+
   insulatorId     Int
   insulator       Insulator @relation(fields: [insulatorId], references: [id])
 
-  // Relation to Section
   sectionId       Int
   section         Section   @relation(fields: [sectionId], references: [id])
 
-  // Unique combination constraint
   @@unique([insulatorId, sectionId, gauge, rings, features])
 }
